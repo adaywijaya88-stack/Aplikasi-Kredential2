@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIM-Kredensial RSUD Kepulauan Seribu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; }
+      .print-container { box-shadow: none; padding: 0; margin: 0; }
+      .page-break { page-break-before: always; }
+      [contenteditable="true"] { border: none !important; background: transparent !important; }
+    }
+    [contenteditable="true"]:hover {
+      background-color: rgba(16, 185, 129, 0.05);
+      outline: 1px dashed #059669;
+      border-radius: 4px;
+      cursor: text;
+    }
+    [contenteditable="true"]:focus {
+      background-color: rgba(16, 185, 129, 0.1);
+      outline: 2px solid #059669;
+      border-radius: 4px;
+    }
+    .cert-border {
+      border: 3px solid #1e3a8a;
+      padding: 6px;
+    }
+    .cert-inner-border {
+      border: 1px solid #1e3a8a;
+      padding: 24px;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+
+  <!-- TOP HEADER -->
+  <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-50 no-print">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <!-- LOGO JAKSEHAT DIPERBESAR DAN BACKGROUND PUTIH -->
+        <div class="bg-white p-1.5 rounded-lg shadow-sm flex items-center justify-center">
+          <img src="jaksehat.png" alt="Logo JakSehat" class="h-12 w-auto object-contain">
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">SIM-Kredensial RSUD Kepulauan Seribu</h1>
+          <p class="text-xs text-emerald-200">Aplikasi Permohonan F1 - Komite Keperawatan (Pokja KKS/TKRS)</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span id="autoSaveIndicator" class="text-xs bg-emerald-700 text-emerald-100 px-2.5 py-1 rounded-full hidden flex items-center space-x-1">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Tersimpan otomatis</span>
+        </span>
+        <button onclick="openSettingsModal()" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center space-x-1">
+          <i class="fa-solid fa-gear"></i>
+          <span>Pengaturan Apps Script API</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="bg-white border-b border-slate-200 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 flex space-x-6">
+      <button onclick="switchTab('formTab')" id="btnFormTab" class="py-3 px-1 border-b-2 font-medium text-sm text-emerald-700 border-emerald-600 flex items-center space-x-2">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>Form Permohonan F1</span>
+      </button>
+      <button onclick="switchTab('previewTab')" id="btnPreviewTab" class="py-3 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 flex items-center space-x-2">
+        <i class="fa-solid fa-lock text-amber-500 mr-1" id="iconLockPreview"></i>
+        <span>Cetak / Preview & Edit SPK & RKK</span>
+      </button>
+      <button onclick="switchTab('historyTab')" id="btnHistoryTab" class="py-3 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 flex items-center space-x-2">
+        <i class="fa-solid fa-lock text-amber-500 mr-1" id="iconLockHistory"></i>
+        <span>Riwayat & Spreadsheet Akreditasi</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- TAB 1: FORMULIR -->
+    <div id="formTab" class="space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+        
+        <div class="bg-emerald-50 border-l-4 border-emerald-600 p-4 rounded-r-lg mb-6 flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">Format Permohonan F1</span>
+            <h2 class="text-xl font-bold text-slate-900 mt-1">Aplikasi Kredensialing Perawat & Bidan RSUD Kepulauan Seribu</h2>
+            <p class="text-sm text-slate-600">Formulir Resmi Komite Keperawatan Sub Komite Kredensial.</p>
+          </div>
+          <button type="button" onclick="resetFormulir(true)" class="bg-red-50 hover:bg-red-100 text-red-700 font-semibold px-3 py-2 rounded-lg text-xs border border-red-200 flex items-center space-x-1 transition shadow-sm" title="Kosongkan semua bidang untuk input tenaga medis baru">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Reset / Form Baru</span>
+          </button>
+        </div>
+
+        <form id="kredensialForm" onsubmit="submitForm(event)">
+          
+          <!-- 1. IDENTITAS & FOTO -->
+          <div class="flex items-center space-x-2 mb-4">
+            <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">1</span>
+            <h3 class="font-bold text-emerald-900 text-base">Identitas Perawat / Bidan & Pas foto</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-center">
+            <div class="md:col-span-3 space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Pemohon *</label>
+                  <input type="text" id="nama" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="Ns. Budi Santoso, S.Kep">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">NIP / NIK *</label>
+                  <input type="text" id="nip" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="198904122019031002">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Lahir *</label>
+                  <input type="date" id="tglLahir" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg">
+                </div>
+              </div>
+            </div>
+            
+            <!-- INPUT FOTO -->
+            <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 p-3 rounded-lg bg-slate-50 text-center">
+              <div id="fotoPreviewBox" class="w-28 h-36 bg-slate-200 mb-2 flex items-center justify-center text-slate-400 text-xs overflow-hidden rounded border border-slate-300 shadow-sm">
+                <i class="fa-solid fa-user text-3xl"></i>
+              </div>
+              <label class="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3 py-1.5 rounded shadow font-semibold">
+                <i class="fa-solid fa-camera mr-1"></i> Unggah Pas Foto
+                <input type="file" id="inputFoto" accept="image/*" class="hidden" onchange="previewFoto(event)">
+              </label>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Alamat Tempat Tinggal *</label>
+              <input type="text" id="alamat" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="Pulau Pramuka RT 02/RW 01">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Telepon & HP *</label>
+              <input type="text" id="telepon" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="081234567890">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Email *</label>
+              <input type="email" id="email" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="perawat@rsudkepulauanseribu.go.id">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Registrasi (STR) *</label>
+              <input type="text" id="noStr" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="340252119382901">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Ijazah *</label>
+              <input type="text" id="noIjazah" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="12345/UGM/2020">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Institusi Pendidikan *</label>
+              <input type="text" id="institusi" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="Poltekkes / Universitas">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Lulus *</label>
+              <input type="date" id="tglLulus" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Kualifikasi Pendidikan *</label>
+              <select id="kualifikasi" onchange="onKualifikasiChange()" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg">
+                <option value="Ners">Ners</option>
+                <option value="D3 Keperawatan">D3 Keperawatan</option>
+                <option value="D4 Kebidanan">D4 Kebidanan</option>
+                <option value="D3 Kebidanan">D3 Kebidanan</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- PENJENJANGAN KARIR -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Penjenjangan Karir *</label>
+              <select id="penjenjangan" onchange="onPenjenjanganChange()" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg">
+                <option value="PK I">Perawat Klinik I (PK I)</option>
+                <option value="PK II">Perawat Klinik II (PK II)</option>
+                <option value="PK III">Perawat Klinik III (PK III)</option>
+                <option value="PK IV">Perawat Klinik IV (PK IV)</option>
+                <option value="PK V">Perawat Klinik V (PK V)</option>
+                <option value="BK I">Bidan Klinik I (BK I)</option>
+                <option value="BK II">Bidan Klinik II (BK II)</option>
+                <option value="BK III">Bidan Klinik III (BK III)</option>
+                <option value="BK IV">Bidan Klinik IV (BK IV)</option>
+                <option value="BK V">Bidan Klinik V (BK V)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Unit Kerja / Ruangan *</label>
+              <input type="text" id="unitKerja" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" value="Rawat Inap" placeholder="Contoh: Rawat Inap / IGD / Kebidanan">
+            </div>
+          </div>
+
+          <!-- UPLOAD LOGBOOK HARIAN -->
+          <div class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <label class="block text-xs font-bold text-slate-700 mb-2"><i class="fa-solid fa-book-bookmark mr-1 text-emerald-700"></i> Unggah Berkas Logbook Harian (JPG / PNG / PDF)</label>
+            <input type="file" id="fileLogbook" accept="image/*,.pdf" onchange="previewLogbook(event)" class="w-full p-2 text-xs border border-slate-300 bg-white rounded-lg">
+            <div id="logbookFormBox" class="mt-2 hidden">
+              <img id="logbookFormImg" class="max-h-48 rounded border border-slate-300 shadow-sm hidden" alt="Pratinjau Logbook Harian">
+              <p id="logbookFileName" class="text-xs text-slate-600 font-semibold bg-emerald-50 p-2 rounded border border-emerald-200 hidden"><i class="fa-solid fa-file-pdf mr-1 text-red-600"></i> Berkas terpilih: <span></span></p>
+            </div>
+          </div>
+
+          <!-- 2. STATUS & PRASYARAT -->
+          <div class="flex items-center space-x-2 mb-4 pt-4 border-t border-slate-200">
+            <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">2</span>
+            <h3 class="font-bold text-emerald-900 text-base">Status & Prasyarat Kredensialing</h3>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
+            <label class="block text-xs font-bold text-slate-700 mb-2">STATUS KREDENSIALING YANG DIUSULKAN *</label>
+            <div class="flex flex-wrap gap-6">
+              <label class="flex items-center space-x-2 text-sm"><input type="radio" name="statusKredensial" value="Awal" checked class="text-emerald-600"> <span>Awal</span></label>
+              <label class="flex items-center space-x-2 text-sm"><input type="radio" name="statusKredensial" value="Kenaikan tingkat" class="text-emerald-600"> <span>Kenaikan tingkat</span></label>
+              <label class="flex items-center space-x-2 text-sm"><input type="radio" name="statusKredensial" value="Pemulihan Kewenangan" class="text-emerald-600"> <span>Pemulihan Kewenangan</span></label>
+            </div>
+          </div>
+
+          <div class="space-y-4 mb-6">
+            <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <label class="block text-xs font-bold text-slate-700 mb-2">1. Apakah Anda pernah dilakukan kredensialing sebelumnya?</label>
+              <div class="flex space-x-6 mb-2">
+                <label class="flex items-center space-x-2 text-sm"><input type="radio" name="pernahKredensial" value="Ya"> <span>Ya</span></label>
+                <label class="flex items-center space-x-2 text-sm"><input type="radio" name="pernahKredensial" value="Tidak" checked> <span>Tidak</span></label>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <label class="block text-xs font-bold text-slate-700 mb-2">2. Apakah Anda memiliki Surat Penugasan Klinis (SPK) yang menjelaskan kewenangan klinis Anda?</label>
+              <div class="flex space-x-6 mb-2">
+                <label class="flex items-center space-x-2 text-sm"><input type="radio" name="punyaSpk" value="Ya" checked> <span>Ya</span></label>
+                <label class="flex items-center space-x-2 text-sm"><input type="radio" name="punyaSpk" value="Tidak"> <span>Tidak</span></label>
+              </div>
+              <input type="text" id="keteranganSpk" class="w-full p-2 text-sm bg-white border border-slate-300 rounded-lg" placeholder="Contoh: SPK No. 440/012/RSUDKS/2023">
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <label class="block text-xs font-bold text-slate-700 mb-2">3. Apakah kewenangan klinis Anda pernah:</label>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+                <div><span>Dikurangi: </span><label><input type="radio" name="dikurangi" value="Ya"> Ya</label> <label><input type="radio" name="dikurangi" value="Tidak" checked> Tidak</label></div>
+                <div><span>Dibekukan: </span><label><input type="radio" name="dibekukan" value="Ya"> Ya</label> <label><input type="radio" name="dibekukan" value="Tidak" checked> Tidak</label></div>
+                <div><span>Dicabut: </span><label><input type="radio" name="dicabut" value="Ya"> Ya</label> <label><input type="radio" name="dicabut" value="Tidak" checked> Tidak</label></div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <label class="block text-xs font-bold text-slate-700 mb-2">4. Apakah Anda pernah terlibat dalam persidangan perdata ataupun pidana terkait kewenangan klinis?</label>
+              <div class="flex space-x-6">
+                <label class="flex items-center space-x-2 text-sm"><input type="radio" name="persidangan" value="Ya"> <span>Ya</span></label>
+                <label class="flex items-center space-x-2 text-sm"><input type="radio" name="persidangan" value="Tidak" checked> <span>Tidak</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. CPD -->
+          <div class="flex justify-between items-center mb-4 pt-4 border-t border-slate-200">
+            <div class="flex items-center space-x-2">
+              <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">3</span>
+              <h3 class="font-bold text-emerald-900 text-base">Program Pengembangan Profesional Berkelanjutan (CPD) 3 Tahun Terakhir</h3>
+            </div>
+            <button type="button" onclick="tambahBarisCpd()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-300 transition">+ Tambah Kegiatan CPD</button>
+          </div>
+
+          <div class="overflow-x-auto mb-6">
+            <table id="tabelCpd" class="w-full text-left text-xs border border-slate-200 rounded-lg">
+              <thead class="bg-slate-50 text-slate-700 uppercase">
+                <tr>
+                  <th class="p-2.5 border-b w-20">Tahun / Tgl</th>
+                  <th class="p-2.5 border-b">Nama Kegiatan Pengembangan</th>
+                  <th class="p-2.5 border-b w-36">Bukti (No Sertifikat/SK)</th>
+                  <th class="p-2.5 border-b w-36">Institusi Penyelenggara</th>
+                  <th class="p-2.5 border-b w-28">Jenis Kegiatan</th>
+                  <th class="p-2.5 border-b w-36">Masa Berlaku Sertifikat</th>
+                  <th class="p-2.5 border-b text-center w-36">Aksi (Upload / Hapus)</th>
+                </tr>
+              </thead>
+              <tbody id="bodyCpd">
+                <!-- Diisi Dinamis -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 4. RKK & INTERVENSI -->
+          <div class="flex justify-between items-center mb-4 pt-4 border-t border-slate-200">
+            <div class="flex items-center space-x-2">
+              <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">4</span>
+              <div>
+                <h3 class="font-bold text-emerald-900 text-base">Daftar Kewenangan Klinis & Intervensi Sesuai Pilihan</h3>
+                <p class="text-xs text-slate-500">Sesuai Buku Putih RSUD Kepulauan Seribu (Kriteria: 1=Kompeten, 2=Dengan Supervisi, 3=Belum Kompeten)</p>
+              </div>
+            </div>
+            <div class="flex space-x-2">
+              <button type="button" onclick="loadPresetIntervensi('perawat')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-blue-300 transition">Muat Intervensi Perawat</button>
+              <button type="button" onclick="loadPresetIntervensi('bidan')" class="bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-purple-300 transition">Muat Intervensi Bidan</button>
+              <button type="button" onclick="tambahBarisIntervensi()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-300 transition">+ Tambah Baris</button>
+            </div>
+          </div>
+
+          <!-- KEAHLIAN & PROFESI PK 1-5 & BK 1-5 -->
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4 space-y-2 text-xs font-semibold">
+            <div class="flex flex-wrap gap-4 items-center">
+              <span class="font-bold text-emerald-900">Perawat Klinik (PK):</span>
+              <label><input type="checkbox" id="chkPk1" checked onchange="handleCheckboxChange()"> PK 1</label>
+              <label><input type="checkbox" id="chkPk2" onchange="handleCheckboxChange()"> PK 2</label>
+              <label><input type="checkbox" id="chkPk3" onchange="handleCheckboxChange()"> PK 3</label>
+              <label><input type="checkbox" id="chkPk4" onchange="handleCheckboxChange()"> PK 4</label>
+              <label><input type="checkbox" id="chkPk5" onchange="handleCheckboxChange()"> PK 5</label>
+            </div>
+            <div class="flex flex-wrap gap-4 items-center pt-2 border-t border-slate-200">
+              <span class="font-bold text-purple-900">Bidan Klinik (BK):</span>
+              <label><input type="checkbox" id="chkBk1" onchange="handleCheckboxChange()"> BK 1</label>
+              <label><input type="checkbox" id="chkBk2" onchange="handleCheckboxChange()"> BK 2</label>
+              <label><input type="checkbox" id="chkBk3" onchange="handleCheckboxChange()"> BK 3</label>
+              <label><input type="checkbox" id="chkBk4" onchange="handleCheckboxChange()"> BK 4</label>
+              <label><input type="checkbox" id="chkBk5" onchange="handleCheckboxChange()"> BK 5</label>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto mb-6">
+            <table id="tabelIntervensi" class="w-full text-left text-xs border border-slate-200 rounded-lg">
+              <thead class="bg-slate-50 text-slate-700 uppercase">
+                <tr>
+                  <th class="p-2.5 border-b w-12 text-center">NO</th>
+                  <th class="p-2.5 border-b">DAFTAR KEWENANGAN KLINIS / INTERVENSI</th>
+                  <th class="p-2.5 border-b w-44 text-center">KEMAMPUAN SAAT INI</th>
+                  <th class="p-2.5 border-b w-44 text-center">REVIEW MITRA BESTARI</th>
+                  <th class="p-2.5 border-b w-32 text-center">REKOMENDASI</th>
+                  <th class="p-2.5 border-b text-center w-16">HAPUS</th>
+                </tr>
+              </thead>
+              <tbody id="bodyIntervensi">
+                <!-- Dinamis -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 5. TIM KREDENSIAL & REKOMENDASI -->
+          <div class="flex items-center space-x-2 mb-4 pt-4 border-t border-slate-200">
+            <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">5</span>
+            <h3 class="font-bold text-emerald-900 text-base">Identitas Tim Kredensialing / Mitra Bestari & Ringkasan Rekomendasi</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Ketua Tim Kredensial / Mitra Bestari *</label>
+              <input type="text" id="ketuaMitra" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="Mahendra, Amd.Kep">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Ketua Komite Keperawatan / Kebidanan *</label>
+              <input type="text" id="ketuaKomite" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="Ns. Asqitul Baroroh, S.Kep">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Persetujuan / Rekomendasi *</label>
+              <input type="date" id="tglPersetujuan" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg">
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Ringkasan & Catatan Rekomendasi Mitra Bestari *</label>
+            <textarea id="catatanMitra" rows="3" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="Pemohon direkomendasikan untuk diberikan Kewenangan Klinis..."></textarea>
+          </div>
+
+          <!-- SUBMIT ACTIONS -->
+          <div class="flex justify-end space-x-3 pt-4 border-t border-slate-200">
+            <button type="button" onclick="resetFormulir(true)" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold px-4 py-2.5 rounded-lg text-sm transition">
+              Reset Form
+            </button>
+            <button type="button" onclick="switchTab('previewTab')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-lg text-sm transition flex items-center space-x-2">
+              <i class="fa-solid fa-print"></i>
+              <span>Preview & Edit Dokumen</span>
+            </button>
+            <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition flex items-center space-x-2 shadow-sm">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Simpan & Kirim Ke Apps Script</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 2: PREVIEW & EDIT CETAK RESMI -->
+    <div id="previewTab" class="hidden space-y-4">
+      <div class="flex justify-between items-center no-print bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+        <div class="flex items-center space-x-2 text-xs text-emerald-800 font-semibold">
+          <i class="fa-solid fa-circle-info text-emerald-600"></i>
+          <span>Tips: Anda dapat langsung mengklik teks di bawah ini (seperti Nama, NIP, atau narasi keputusan) untuk melakukan pengeditan langsung (live editing) sebelum dicetak!</span>
+        </div>
+        <div class="flex space-x-2">
+          <button onclick="switchTab('formTab')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-lg text-xs">← Kembali ke Form</button>
+          <button onclick="window.print()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center space-x-1 shadow">
+            <i class="fa-solid fa-print"></i>
+            <span>Cetak / PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 md:p-12 rounded-xl shadow-sm border border-slate-200 print-container font-serif">
+        
+        <!-- ================= LEMBAR 1: SERTIFIKAT KREDENSIAL ================= -->
+        <div class="cert-border mb-8">
+          <div class="cert-inner-border text-center relative">
+            
+            <!-- LOGO HEADER SERTIFIKAT -->
+            <div class="flex justify-between items-center mb-2 px-4">
+              <img src="jayaraya.png" alt="Logo Jaya Raya" class="h-16 w-auto object-contain">
+              <div class="text-center">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-blue-900" contenteditable="true">PEMERINTAH PROVINSI DAERAH KHUSUS IBUKOTA JAKARTA</h2>
+                <h3 class="text-[11px] font-bold uppercase tracking-wider text-blue-900" contenteditable="true">DINAS KESEHATAN</h3>
+                <h1 class="text-base font-extrabold uppercase tracking-wide text-blue-900 mt-0.5" contenteditable="true">RUMAH SAKIT UMUM DAERAH KEPULAUAN SERIBU</h1>
+                <p class="text-[10px] italic text-slate-600" contenteditable="true">Alamat: Jl. Pulau Pramuka, Kel. Pulau Panggang, Kec. Kepulauan Seribu Utara</p>
+              </div>
+              <img src="jaksehat.png" alt="Logo JakSehat" class="h-14 w-auto object-contain">
+            </div>
+
+            <hr class="border-t-2 border-blue-900 mb-6">
+
+            <h2 class="text-2xl font-black uppercase tracking-widest text-blue-950 mb-1" contenteditable="true">SERTIFIKAT KREDENSIAL</h2>
+            <h3 class="text-sm font-bold uppercase text-blue-900 mb-2" contenteditable="true">TENAGA KEPERAWATAN & KEBIDANAN</h3>
+            <p class="text-xs font-semibold text-slate-800 mb-4">Nomor: <span id="certNomor" contenteditable="true">....................................................</span></p>
+
+            <p class="text-xs italic text-slate-700 mb-2" contenteditable="true">Diberikan kepada:</p>
+            <div class="border-b-2 border-dotted border-blue-900 py-1 mb-1 max-w-xl mx-auto">
+              <span id="certNama" class="text-base font-bold italic text-slate-900 uppercase" contenteditable="true">Nama Lengkap dan Gelar</span>
+            </div>
+            <p class="text-[11px] italic text-slate-500 mb-4">Nama Lengkap dan Gelar</p>
+
+            <table class="w-full max-w-2xl mx-auto text-xs border-collapse border border-slate-400 text-left mb-4">
+              <tr>
+                <td class="border border-slate-400 p-1.5 font-bold w-40 bg-slate-50">NIP / NIK</td>
+                <td class="border border-slate-400 p-1.5" id="certNip" contenteditable="true">...............................................................................</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-1.5 font-bold bg-slate-50">Nomor STR</td>
+                <td class="border border-slate-400 p-1.5" id="certStr" contenteditable="true">...............................................................................</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-1.5 font-bold bg-slate-50">Unit Kerja</td>
+                <td class="border border-slate-400 p-1.5" id="certUnit" contenteditable="true">...............................................................................</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-1.5 font-bold bg-slate-50">Jabatan / Jenjang Klinis</td>
+                <td class="border border-slate-400 p-1.5" id="certJenjang" contenteditable="true">...............................................................................</td>
+              </tr>
+            </table>
+
+            <p class="text-xs leading-relaxed text-justify max-w-2xl mx-auto mb-4" contenteditable="true">
+              Dengan ini menerangkan bahwa nama tersebut di atas telah mengikuti proses kredensial tenaga keperawatan dan kebidanan di RSUD Kepulauan Seribu yang dilaksanakan oleh Komite Keperawatan sesuai ketentuan dan prosedur rumah sakit. Sertifikat ini merupakan bukti keikutsertaan dalam proses kredensial dan bukan merupakan pengganti Surat Penugasan Klinis (SPK) atau dokumen penetapan kewenangan klinis.
+            </p>
+
+            <table class="w-full max-w-2xl mx-auto text-[11px] border-collapse border border-slate-400 text-left mb-6">
+              <tr>
+                <td class="border border-slate-400 p-1.5 w-1/2">
+                  <span class="font-semibold">Tanggal pelaksanaan kredensial:</span> <span id="certTglPelaksanaan" contenteditable="true">..................</span>
+                </td>
+                <td class="border border-slate-400 p-1.5 w-1/2">
+                  <span class="font-semibold">Tanggal penerbitan:</span> <span id="certTglPenerbitan" contenteditable="true">..................</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-1.5">
+                  <span class="font-semibold">Masa berlaku sertifikat:</span> <span contenteditable="true">Tidak menetapkan kewenangan klinis</span>
+                </td>
+                <td class="border border-slate-400 p-1.5">
+                  <span class="font-semibold">Masa berlaku SPK:</span> <span contenteditable="true">Mengikuti keputusan resmi rumah sakit</span>
+                </td>
+              </tr>
+            </table>
+
+            <!-- TANDA TANGAN SERTIFIKAT: HANYA KETUA KOMITE KEPERAWATAN -->
+            <div class="max-w-md mx-auto text-center border-dashed border border-slate-300 p-4">
+              <p class="text-xs text-slate-800">Ketua Komite Keperawatan,</p>
+              <div class="my-10"></div>
+              <p class="text-xs font-bold">( <span id="certKetuaKomite" contenteditable="true">Ns. Asqitul Baroroh, S.Kep</span> )</p>
+              <p class="text-xs text-slate-700">NIP. <span id="certNipKomite" contenteditable="true">...................................</span></p>
+            </div>
+
+            <p class="text-[10px] italic text-slate-400 mt-4" contenteditable="true">Dokumen ini harus diisi, diverifikasi, dan ditandatangani oleh pejabat yang berwenang.</p>
+          </div>
+        </div>
+
+        <!-- ================= LEMBAR 2: SURAT PENUGASAN KLINIS (SPK) ================= -->
+        <div class="page-break pt-6">
+          <div class="text-center mb-6">
+            <!-- KOP SURAT: LOGO JAYA RAYA CENTER DI ATAS TEKS, TANPA JAKSEHAT -->
+            <div class="max-w-3xl mx-auto mb-2 border-b-2 border-slate-900 pb-3">
+              <img src="jayaraya.png" alt="Logo Jaya Raya" class="h-16 w-auto object-contain mx-auto mb-2">
+              <h2 class="text-xs font-bold uppercase tracking-wider" contenteditable="true">PEMERINTAH PROVINSI DAERAH KHUSUS IBUKOTA JAKARTA</h2>
+              <h3 class="text-sm font-extrabold uppercase tracking-wide" contenteditable="true">RUMAH SAKIT UMUM DAERAH KEPULAUAN SERIBU</h3>
+              <p class="text-[10px] italic" contenteditable="true">Jl. Pulau Pramuka, Kel. Pulau Panggang, Kec. Kepulauan Seribu Utara</p>
+            </div>
+
+            <p class="text-xs font-bold uppercase mt-2" contenteditable="true">KEPUTUSAN DIREKTUR RUMAH SAKIT UMUM DAERAH<br>KEPULAUAN SERIBU</p>
+            <p class="text-xs font-semibold uppercase mt-1" contenteditable="true">NOMOR TAHUN Juni 2026</p>
+            <p class="text-xs font-bold uppercase mt-1">TENTANG</p>
+            <p class="text-xs font-bold uppercase mt-1" contenteditable="true">SURAT PENUGASAN KLINIS TENAGA KEPERAWATAN & KEBIDANAN</p>
+            <p class="text-xs font-bold mt-0.5">Nama : <span id="spkNamaHeader" contenteditable="true">..............</span></p>
+            <p class="text-xs font-bold uppercase mt-3" contenteditable="true">DENGAN RAHMAT TUHAN YANG MAHA ESA</p>
+            <p class="text-xs font-bold uppercase mt-1" contenteditable="true">DIREKTUR RUMAH SAKIT UMUM DAERAH<br>KEPULAUAN SERIBU</p>
+          </div>
+
+          <table class="w-full text-xs leading-relaxed mb-6 border-collapse">
+            <tr class="align-top">
+              <td class="w-24 font-semibold py-1">Menimbang</td>
+              <td class="w-4 py-1">:</td>
+              <td class="w-6 py-1">a.</td>
+              <td class="py-1 text-justify" contenteditable="true">Bahwa setiap tenaga keperawatan dan kebidanan harus dilakukan evaluasi untuk menentukan jenis kompetensi yang dimiliki dalam melaksanakan tugas klinis di rumah sakit;</td>
+            </tr>
+            <tr class="align-top">
+              <td></td>
+              <td></td>
+              <td class="py-1">b.</td>
+              <td class="py-1 text-justify" contenteditable="true">bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a perlu menetapkan Keputusan Direktur Rumah Sakit Umum Daerah Kepulauan Seribu tentang Surat Penugasan Klinis berdasarkan rincian kewenangan klinis ;</td>
+            </tr>
+            <tr class="align-top">
+              <td class="font-semibold py-2">Mengingat</td>
+              <td class="py-2">:</td>
+              <td class="py-2">1.</td>
+              <td class="py-2 text-justify" contenteditable="true">Undang-Undang Nomor 38 Tahun 2014 tentang Keperawatan;</td>
+            </tr>
+            <tr class="align-top">
+              <td></td>
+              <td></td>
+              <td class="py-1">2.</td>
+              <td class="py-1 text-justify" contenteditable="true">Undang-Undang Nomor 17 Tahun 2023 tentang Kesehatan;</td>
+            </tr>
+            <tr class="align-top">
+              <td></td>
+              <td></td>
+              <td class="py-1">3.</td>
+              <td class="py-1 text-justify" contenteditable="true">Peraturan Menteri Kesehatan Nomor 1045 / MENKES / PER / XI / 2006 tentang Pedoman Organisasi Rumah Sakit;</td>
+            </tr>
+            <tr class="align-top">
+              <td></td>
+              <td></td>
+              <td class="py-1">7.</td>
+              <td class="py-1 text-justify" contenteditable="true">Peraturan Menteri Kesehatan Nomor 49 Tahun 2013 tentang Komite Keperawatan;</td>
+            </tr>
+          </table>
+
+          <!-- BAGIAN MEMUTUSKAN -->
+          <div class="text-center font-bold text-xs uppercase tracking-[0.2em] mb-2">MEMUTUSKAN :</div>
+          <div class="text-xs font-semibold mb-3">Menetapkan :</div>
+
+          <table class="w-full text-xs leading-relaxed mb-8 border-collapse">
+            <tr class="align-top">
+              <td class="w-24 font-semibold py-1.5">Kesatu</td>
+              <td class="w-4 py-1.5">:</td>
+              <td class="py-1.5 text-justify uppercase font-bold" contenteditable="true">KEPUTUSAN DIREKTUR RUMAH SAKIT UMUM DAERAH KEPULAUAN SERIBU TENTANG PENUGASAN KEWENANGAN KLINIS PERAWAT</td>
+            </tr>
+            <tr class="align-top">
+              <td class="font-semibold py-1.5">Kedua</td>
+              <td class="py-1.5">:</td>
+              <td class="py-1.5 text-justify">
+                <p contenteditable="true" class="mb-1">Memberikan Penugasan Kewenangan Klinis Perawat kepada tenaga perawat tersebut di bawah ini:</p>
+                <table class="w-full text-xs border-collapse">
+                  <tr>
+                    <td class="w-36 py-0.5">Nama</td>
+                    <td class="w-3 py-0.5">:</td>
+                    <td class="py-0.5 font-semibold" id="spkNamaKesatu" contenteditable="true">Nama Lengkap</td>
+                  </tr>
+                  <tr>
+                    <td class="py-0.5">Unit kerja</td>
+                    <td class="w-3 py-0.5">:</td>
+                    <td class="py-0.5" id="spkUnitKerja" contenteditable="true">Rawat Inap</td>
+                  </tr>
+                  <tr>
+                    <td class="py-0.5">Kualifikasi</td>
+                    <td class="w-3 py-0.5">:</td>
+                    <td class="py-0.5" id="spkKualifikasi" contenteditable="true">PK I</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr class="align-top">
+              <td class="font-semibold py-1.5">Ketiga</td>
+              <td class="py-1.5">:</td>
+              <td class="py-1.5 text-justify" contenteditable="true">Rincian Kewenangan Klinis Perawat untuk tenaga perawat yang dimaksud dalam diktum pertama adalah sebagaimana tercantum dalam lampiran Keputusan ini.</td>
+            </tr>
+            <tr class="align-top">
+              <td class="font-semibold py-1.5">Keempat</td>
+              <td class="py-1.5">:</td>
+              <td class="py-1.5 text-justify" contenteditable="true">Keputusan ini berlaku 3 (tiga) tahun sejak tanggal ditetapkan.</td>
+            </tr>
+            <tr class="align-top">
+              <td class="font-semibold py-1.5">Kelima</td>
+              <td class="py-1.5">:</td>
+              <td class="py-1.5 text-justify" contenteditable="true">Keputusan ini berlaku sejak tanggal ditetapkannya, dan apabila di kemudian hari ternyata terdapat kekeliruan dalam penetapan ini akan diadakan perbaikan sebagaimana mestinya.</td>
+            </tr>
+          </table>
+
+          <div class="flex flex-col items-end text-xs mr-8 mb-12">
+            <div class="text-left w-64">
+              <p contenteditable="true">Ditetapkan di Jakarta</p>
+              <p>pada tanggal <span id="spkTglDitetapkan" contenteditable="true">Juni 2026</span></p>
+              <div class="my-10 relative w-32 h-16"></div>
+              <p class="font-bold underline uppercase" contenteditable="true">dr. Arif Purwadi</p>
+              <p contenteditable="true">NIP. 197805132011011008</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= LEMBAR 3: RINCIAN KEWENANGAN KLINIS (RKK) ================= -->
+        <div class="page-break pt-8 border-t-2 border-slate-900 relative">
+          
+          <!-- PAS FOTO 4x6 CM -->
+          <div class="absolute top-8 right-8 w-32 h-44 border-2 border-slate-900 flex items-center justify-center bg-slate-100 overflow-hidden shadow-sm">
+            <img id="pPreviewFotoImg" src="" class="w-full h-full object-cover hidden" alt="Foto Pemohon">
+            <span id="pPreviewFotoText" class="text-xs text-slate-500 font-bold text-center px-2">Pas Foto<br>4 x 6 cm</span>
+          </div>
+
+          <!-- KOP SURAT: LOGO JAYA RAYA CENTER DI ATAS TEKS, TANPA JAKSEHAT -->
+          <div class="text-center border-b-4 border-double border-slate-900 pb-4 mb-6 mr-36">
+            <div class="mb-2">
+              <img src="jayaraya.png" alt="Logo Jaya Raya" class="h-16 w-auto object-contain mx-auto">
+            </div>
+            <h2 class="text-lg font-bold uppercase tracking-wider text-center" contenteditable="true">PEMERINTAH PROVINSI DAERAH KHUSUS IBUKOTA JAKARTA</h2>
+            <h3 class="text-xl font-extrabold uppercase tracking-wide text-center" contenteditable="true">RUMAH SAKIT UMUM DAERAH KEPULAUAN SERIBU</h3>
+            <p class="text-xs italic mt-1 text-center" contenteditable="true">Jl. Pulau Pramuka, Kelurahan Pulau Panggang, Kecamatan Kepulauan Seribu Utara, DKI Jakarta</p>
+          </div>
+
+          <h4 class="text-center font-bold text-base uppercase underline mb-4" contenteditable="true">RINCIAN KEWENANGAN KLINIS TENAGA KEPERAWATAN & KEBIDANAN</h4>
+
+          <p class="text-xs leading-relaxed mb-4 text-justify mr-36" contenteditable="true">
+            Rincian Kewenangan Klinis diberikan kepada tenaga kesehatan dalam menjalankan tugas profesional di RSUD Kepulauan Seribu.
+          </p>
+
+          <p class="text-xs font-bold mb-1" contenteditable="true">Rincian Kewenangan Klinis ini diberikan kepada :</p>
+          <table class="w-full text-xs mb-4 border-collapse mr-36">
+            <tr><td class="w-32 font-bold py-0.5">Nama</td><td>: <span id="p Nama" class="font-semibold" contenteditable="true">-</span></td></tr>
+            <tr><td class="font-bold py-0.5">Kualifikasi</td><td>: <span id="pJenjang" class="font-semibold" contenteditable="true">-</span></td></tr>
+            <tr><td class="font-bold py-0.5">NIP / NIK</td><td>: <span id="pNip" contenteditable="true">-</span></td></tr>
+            <tr><td class="font-bold py-0.5">Nomor STR</td><td>: <span id="pStr" contenteditable="true">-</span></td></tr>
+            <tr><td class="font-bold py-0.5">Status Kredensial</td><td>: <span id="pStatus" contenteditable="true">-</span></td></tr>
+          </table>
+
+          <p class="text-xs leading-relaxed mb-4 text-justify" contenteditable="true">
+            Kewenangan Klinis yang diberikan adalah melakukan intervensi klinis secara mandiri dan kolaborasi, sebagai berikut :
+          </p>
+
+          <div class="font-bold text-xs uppercase mb-2" contenteditable="true">MELAKSANAKAN INTERVENSI KLINIS SPESIFIK:</div>
+          <table class="w-full text-xs border border-slate-900 mb-6" id="pTabelRkk">
+            <thead class="bg-slate-200 text-slate-900">
+              <tr>
+                <th class="border border-slate-900 p-1.5 w-10 text-center">NO</th>
+                <th class="border border-slate-900 p-1.5">DAFTAR INTERVENSI & KEWENANGAN KLINIS</th>
+                <th class="border border-slate-900 p-1.5 w-28 text-center">MANDIRI</th>
+                <th class="border border-slate-900 p-1.5 w-28 text-center">MITRA BESTARI</th>
+                <th class="border border-slate-900 p-1.5 w-24 text-center">REKOMENDASI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Diisi JavaScript -->
+            </tbody>
+          </table>
+
+          <div class="text-xs mb-6">
+            <span class="font-bold">Catatan & Ringkasan Mitra Bestari:</span>
+            <p class="italic bg-slate-50 p-2.5 border border-slate-300 rounded mt-1" id="pCatatanMitra" contenteditable="true">-</p>
+          </div>
+
+          <!-- TANDA TANGAN 3 KOLOM: TIM KREDENSIAL/MITRA BESTARI | KETUA KOMITE | DIREKTUR -->
+          <table class="w-full text-center text-xs mt-8 border-none">
+            <tr>
+              <td class="w-1/3 align-top">
+                Tim Kredensial / Mitra Bestari,<br><br><br><br>
+                <strong id="pTtdMitra" contenteditable="true">( Mahendra, Amd.Kep )</strong>
+              </td>
+              <td class="w-1/3 align-top">
+                Ketua Komite Keperawatan / Kebidanan,<br><br><br><br>
+                <strong id="pTtdKomite" contenteditable="true">( Ns. Asqitul Baroroh, S.Kep )</strong>
+              </td>
+              <td class="w-1/3 align-top">
+                Menyetujui,<br>
+                <strong>Direktur RSUD Kepulauan Seribu</strong><br><br><br>
+                <strong id="pTtdDirektur" contenteditable="true" class="underline uppercase font-bold">dr. Arif Purwadi</strong><br>
+                <span contenteditable="true">NIP. 197805132011011008</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- ================= LEMBAR 4: LAMPIRAN BERKAS LOGBOOK HARIAN ================= -->
+        <div class="page-break mt-12 pt-8 border-t-2 border-slate-900">
+          <h5 class="font-bold text-xs text-center uppercase mb-4" contenteditable="true">LAMPIRAN BERKAS LOGBOOK HARIAN & SERTIFIKAT</h5>
+          <div class="flex flex-col justify-center items-center space-y-6">
+            
+            <!-- PRATINJAU LOGBOOK HARIAN -->
+            <div id="pLogbookPreviewBox" class="max-w-2xl w-full border border-slate-300 p-2 rounded bg-slate-50 text-center">
+              <span id="pLogbookEmptyText" class="text-xs text-slate-400 italic">Belum ada berkas Logbook Harian yang diunggah.</span>
+              <img id="pLogbookImg" class="w-full h-auto rounded shadow-sm hidden" alt="Lampiran Logbook Harian">
+              <div id="pLogbookPdfText" class="p-3 bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold rounded hidden">
+                <i class="fa-solid fa-file-pdf mr-1 text-red-600"></i> Berkas Logbook Harian terlampir dalam format PDF.
+              </div>
+            </div>
+
+            <!-- CONTAINER DINAMIS HASIL UPLOAD SERTIFIKAT TABEL CPD -->
+            <div id="pCpdSertifikatContainer" class="max-w-2xl w-full space-y-4">
+              <!-- Gambar bukti CPD dari tabel akan otomatis ditampilkan di sini -->
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: RIWAYAT & SPREADSHEET -->
+    <div id="historyTab" class="hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h3 class="font-bold text-slate-900 text-lg mb-2">Riwayat Pengajuan Kredensial & Sinkronisasi Spreadsheet</h3>
+        <p class="text-sm text-slate-600 mb-4">Daftar pengajuan kredensial yang tersimpan lokal maupun terkirim ke Google Sheets.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border border-slate-200">
+            <thead class="bg-slate-50 text-slate-700">
+              <tr>
+                <th class="p-3 border-b">Waktu Pengajuan</th>
+                <th class="p-3 border-b">Nama Pemohon</th>
+                <th class="p-3 border-b">Kualifikasi / Jenjang</th>
+                <th class="p-3 border-b">Status</th>
+                <th class="p-3 border-b">ID Data</th>
+                <th class="p-3 border-b text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr>
+                <td colspan="6" class="p-4 text-center text-slate-500">Belum ada riwayat pengajuan dalam sesi ini.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-bold text-slate-900 text-lg">Pengaturan Google Apps Script Web App API</h3>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">URL Web App Google Apps Script (`doPost`)</label>
+        <input type="text" id="scriptUrlInput" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+      <div class="flex justify-end space-x-2 pt-2">
+        <button onclick="closeSettingsModal()" class="bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm">Batal</button>
+        <button onclick="saveSettings()" class="bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg text-sm">Simpan Pengaturan</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isAuthenticated = false; // Status autentikasi password
+    let uploadedFotoDataUrl = "";
+    let uploadedLogbookDataUrl = "";
+    let uploadedLogbookIsPdf = false;
+    let uploadedLogbookFileNameStr = "";
+    let autoSaveTimer = null;
+
+    // DATA BANK INTERVENSI PERAWAT (PK 1-5) & BIDAN (BK 1-5)
+    const dataBank = {
+      pk1: [
+        { kat: "A. KEWENANGAN KLINIS PERAWAT KLINIK I (PK 1)", items: [
+          "Melakukan pengkajian keperawatan dasar dan anamnesis umum",
+          "Pemantauan tanda-tanda vital (Tensi, Nadi, Suhu, Pernapasan)",
+          "Perawatan kebersihan diri dan kenyamanan pasien",
+          "Fasilitasi mobilisasi dan latihan rentang gerak (ROM)",
+          "Manajemen eliminasi fekal dan urin dasar"
+        ]}
+      ],
+      pk2: [
+        { kat: "B. KEWENANGAN KLINIS PERAWAT KLINIK II (PK 2)", items: [
+          "Persiapan pasien pre-operasi dan asesmen risiko bedah",
+          "Perawatan luka bersih, terkontaminasi, dan ganti balut steril",
+          "Pemantauan sirkulasi dan status neurovaskular post-operasi",
+          "Perawatan dan pengosongan drain luka operasi",
+          "Pemasangan jalur intravena (Infus) dan pemberian obat parental"
+        ]}
+      ],
+      pk3: [
+        { kat: "C. KEWENANGAN KLINIS PERAWAT KLINIK III (PK 3)", items: [
+          "Manajemen diit dan pemantauan keseimbangan cairan ketat",
+          "Pemberian terapi oral dan pemantauan efek samping obat",
+          "Edukasi manajemen penyakit kronis (DM, Hipertensi, Gagal Ginjal)",
+          "Perawatan akses vaskular dan pencegahan infeksi nosokomial",
+          "Resusitasi Jantung Paru (RJP / BLS / ACLS dasar)"
+        ]}
+      ],
+      pk4: [
+        { kat: "D. KEWENANGAN KLINIS PERAWAT KLINIK IV (PK 4)", items: [
+          "Pemberian terapi oksigenasi darurat (Nasal, NRM, Bag-Valve-Mask)",
+          "Pengambilan sampel darah vena/arteri dan EKG darurat",
+          "Penanganan awal syok dan kegawatan darurat",
+          "Manajemen asuhan keperawatan kompleks & kritis",
+          "Evaluasi & supervisi mutu asuhan keperawatan unit"
+        ]}
+      ],
+      pk5: [
+        { kat: "E. KEWENANGAN KLINIS PERAWAT KLINIK V (PK 5)", items: [
+          "Konsultasi asuhan keperawatan tingkat lanjut/spesialistik",
+          "Riset dan pengembangan inovasi pelayanan keperawatan",
+          "Penyusunan panduan praktik klinis (PPK) & audit keperawatan",
+          "Manajemen etik dan hukum pelayanan keperawatan kompleks"
+        ]}
+      ],
+      bk1: [
+        { kat: "F. KEWENANGAN KLINIS BIDAN KLINIK I (BK 1)", items: [
+          "Pemeriksaan kehamilan (ANC) dan pemantauan denyut jantung janin (DJJ)",
+          "Pertolongan persalinan normal (Asuhan Persalinan Normal / APN)",
+          "Perawatan masa nifas (Puerperium) dan konseling laktasi / ASI",
+          "Pemeriksaan fisik dan resusitasi awal Bayi Baru Lahir (BBL)",
+          "Pelayanan Keluarga Berencana (KB) Suntik dan Pil"
+        ]}
+      ],
+      bk2: [
+        { kat: "G. KEWENANGAN KLINIS BIDAN KLINIK II (BK 2)", items: [
+          "Jahit luka jalan lahir (Episiotomi / Perineum derajat 1 dan 2)",
+          "Pelayanan KB pemasangan dan pencabutan IUD serta Implan",
+          "Penanganan awal penyulit kebidanan dasar (rujukan)",
+          "Pelayanan kesehatan reproduksi remaja dan wanita usia subur"
+        ]}
+      ],
+      bk3: [
+        { kat: "H. KEWENANGAN KLINIS BIDAN KLINIK III (BK 3)", items: [
+          "Penanganan kegawatdaruratan maternal neonatal dasar (PPGDON)",
+          "Asuhan kebidanan patologi / kasus kebidanan dengan penyulit",
+          "Supervisi dan bimbingan klinik mahasiswa / tenaga bidan junior"
+        ]}
+      ],
+      bk4: [
+        { kat: "I. KEWENANGAN KLINIS BIDAN KLINIK IV (BK 4)", items: [
+          "Manajemen asuhan kebidanan komprehensif kompleks",
+          "Audit maternal perinatal (AMP) dan evaluasi mutu pelayanan kebidanan",
+          "Penyusunan protokol klinis kebidanan instalasi"
+        ]}
+      ],
+      bk5: [
+        { kat: "J. KEWENANGAN KLINIS BIDAN KLINIK V (BK 5)", items: [
+          "Konsultasi kasus kebidanan spesialistik dan kompleks",
+          "Pengembangan riset pelayanan kesehatan ibu dan anak",
+          "Pengembangan kebijakan teknis pelayanan kebidanan rumah sakit"
+        ]}
+      ]
+    };
+
+    // FUNGSI MENGOSONGKAN / RESET FORMULIR DENGAN BERSIH
+    function resetFormulir(konfirmasi = false) {
+      if (konfirmasi && !confirm("Apakah Anda yakin ingin mengosongkan formulir untuk memasukkan data baru?")) {
+        return;
+      }
+
+      document.getElementById('kredensialForm').reset();
+
+      uploadedFotoDataUrl = "";
+      uploadedLogbookDataUrl = "";
+      uploadedLogbookIsPdf = false;
+      uploadedLogbookFileNameStr = "";
+
+      const fotoBox = document.getElementById('fotoPreviewBox');
+      if (fotoBox) fotoBox.innerHTML = `<i class="fa-solid fa-user text-3xl"></i>`;
+
+      const logbookBox = document.getElementById('logbookFormBox');
+      if (logbookBox) logbookBox.classList.add('hidden');
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('tglPersetujuan').value = today;
+
+      localStorage.removeItem('kredensialAutoSaveState');
+
+      document.getElementById('chkPk1').checked = true;
+      document.getElementById('chkPk2').checked = false;
+      document.getElementById('chkPk3').checked = false;
+      document.getElementById('chkPk4').checked = false;
+      document.getElementById('chkPk5').checked = false;
+      document.getElementById('chkBk1').checked = false;
+      document.getElementById('chkBk2').checked = false;
+      document.getElementById('chkBk3').checked = false;
+      document.getElementById('chkBk4').checked = false;
+      document.getElementById('chkBk5').checked = false;
+      handleCheckboxChange();
+    }
+
+    function saveFormStateLocally() {
+      const state = {
+        nama: document.getElementById('nama').value,
+        nip: document.getElementById('nip').value,
+        tglLahir: document.getElementById('tglLahir').value,
+        alamat: document.getElementById('alamat').value,
+        telepon: document.getElementById('telepon').value,
+        email: document.getElementById('email').value,
+        noStr: document.getElementById('noStr').value,
+        noIjazah: document.getElementById('noIjazah').value,
+        institusi: document.getElementById('institusi').value,
+        tglLulus: document.getElementById('tglLulus').value,
+        kualifikasi: document.getElementById('kualifikasi').value,
+        penjenjangan: document.getElementById('penjenjangan').value,
+        unitKerja: document.getElementById('unitKerja').value,
+        ketuaMitra: document.getElementById('ketuaMitra').value,
+        ketuaKomite: document.getElementById('ketuaKomite').value,
+        tglPersetujuan: document.getElementById('tglPersetujuan').value,
+        catatanMitra: document.getElementById('catatanMitra').value,
+        keteranganSpk: document.getElementById('keteranganSpk').value,
+        chkPk1: document.getElementById('chkPk1').checked,
+        chkPk2: document.getElementById('chkPk2').checked,
+        chkPk3: document.getElementById('chkPk3').checked,
+        chkPk4: document.getElementById('chkPk4').checked,
+        chkPk5: document.getElementById('chkPk5').checked,
+        chkBk1: document.getElementById('chkBk1').checked,
+        chkBk2: document.getElementById('chkBk2').checked,
+        chkBk3: document.getElementById('chkBk3').checked,
+        chkBk4: document.getElementById('chkBk4').checked,
+        chkBk5: document.getElementById('chkBk5').checked
+      };
+      localStorage.setItem('kredensialAutoSaveState', JSON.stringify(state));
+
+      const indicator = document.getElementById('autoSaveIndicator');
+      if (indicator) {
+        indicator.classList.remove('hidden');
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(() => {
+          indicator.classList.add('hidden');
+        }, 1500);
+      }
+    }
+
+    function loadFormStateLocally() {
+      const saved = localStorage.getItem('kredensialAutoSaveState');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          if (state.nama !== undefined) document.getElementById('nama').value = state.nama;
+          if (state.nip !== undefined) document.getElementById('nip').value = state.nip;
+          if (state.tglLahir !== undefined) document.getElementById('tglLahir').value = state.tglLahir;
+          if (state.alamat !== undefined) document.getElementById('alamat').value = state.alamat;
+          if (state.telepon !== undefined) document.getElementById('telepon').value = state.telepon;
+          if (state.email !== undefined) document.getElementById('email').value = state.email;
+          if (state.noStr !== undefined) document.getElementById('noStr').value = state.noStr;
+          if (state.noIjazah !== undefined) document.getElementById('noIjazah').value = state.noIjazah;
+          if (state.institusi !== undefined) document.getElementById('institusi').value = state.institusi;
+          if (state.tglLulus !== undefined) document.getElementById('tglLulus').value = state.tglLulus;
+          if (state.kualifikasi !== undefined) document.getElementById('kualifikasi').value = state.kualifikasi;
+          if (state.penjenjangan !== undefined) document.getElementById('penjenjangan').value = state.penjenjangan;
+          if (state.unitKerja !== undefined) document.getElementById('unitKerja').value = state.unitKerja;
+          if (state.ketuaMitra !== undefined) document.getElementById('ketuaMitra').value = state.ketuaMitra;
+          if (state.ketuaKomite !== undefined) document.getElementById('ketuaKomite').value = state.ketuaKomite;
+          if (state.tglPersetujuan !== undefined) document.getElementById('tglPersetujuan').value = state.tglPersetujuan;
+          if (state.catatanMitra !== undefined) document.getElementById('catatanMitra').value = state.catatanMitra;
+          if (state.keteranganSpk !== undefined) document.getElementById('keteranganSpk').value = state.keteranganSpk;
+
+          if (state.chkPk1 !== undefined) document.getElementById('chkPk1').checked = state.chkPk1;
+          if (state.chkPk2 !== undefined) document.getElementById('chkPk2').checked = state.chkPk2;
+          if (state.chkPk3 !== undefined) document.getElementById('chkPk3').checked = state.chkPk3;
+          if (state.chkPk4 !== undefined) document.getElementById('chkPk4').checked = state.chkPk4;
+          if (state.chkPk5 !== undefined) document.getElementById('chkPk5').checked = state.chkPk5;
+          if (state.chkBk1 !== undefined) document.getElementById('chkBk1').checked = state.chkBk1;
+          if (state.chkBk2 !== undefined) document.getElementById('chkBk2').checked = state.chkBk2;
+          if (state.chkBk3 !== undefined) document.getElementById('chkBk3').checked = state.chkBk3;
+          if (state.chkBk4 !== undefined) document.getElementById('chkBk4').checked = state.chkBk4;
+          if (state.chkBk5 !== undefined) document.getElementById('chkBk5').checked = state.chkBk5;
+        } catch (e) {
+          console.error("Gagal memuat auto-save state:", e);
+        }
+      }
+    }
+
+    function attachAutoSaveListeners() {
+      const form = document.getElementById('kredensialForm');
+      if (form) {
+        form.addEventListener('input', saveFormStateLocally);
+        form.addEventListener('change', saveFormStateLocally);
+      }
+    }
+
+    function setEditableState(enable) {
+      const editables = document.querySelectorAll('[contenteditable]');
+      editables.forEach(el => {
+        el.setAttribute('contenteditable', enable ? "true" : "false");
+      });
+    }
+
+    function checkPasswordAccess() {
+      if (isAuthenticated) return true;
+      
+      const pwd = prompt("Masukkan kata sandi untuk mengakses halaman ini:");
+      if (pwd === "Dadang") {
+        isAuthenticated = true;
+        
+        const lockPreview = document.getElementById('iconLockPreview');
+        const lockHistory = document.getElementById('iconLockHistory');
+        if(lockPreview) lockPreview.className = "fa-solid fa-lock-open text-emerald-600 mr-1";
+        if(lockHistory) lockHistory.className = "fa-solid fa-lock-open text-emerald-600 mr-1";
+
+        setEditableState(true);
+        return true;
+      } else {
+        if (pwd !== null) {
+          alert("Kata sandi salah! Akses ditolak.");
+        }
+        return false;
+      }
+    }
+
+    function previewFoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          uploadedFotoDataUrl = e.target.result;
+          const box = document.getElementById('fotoPreviewBox');
+          box.innerHTML = `<img src="${uploadedFotoDataUrl}" class="w-full h-full object-cover">`;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function previewLogbook(event) {
+      const file = event.target.files[0];
+      if (file) {
+        uploadedLogbookFileNameStr = file.name;
+        uploadedLogbookIsPdf = file.type === "application/pdf" || file.name.endsWith('.pdf');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          uploadedLogbookDataUrl = e.target.result;
+          const box = document.getElementById('logbookFormBox');
+          const img = document.getElementById('logbookFormImg');
+          const pdfName = document.getElementById('logbookFileName');
+
+          box.classList.remove('hidden');
+          if (uploadedLogbookIsPdf) {
+            img.classList.add('hidden');
+            pdfName.classList.remove('hidden');
+            pdfName.querySelector('span').innerText = file.name;
+          } else {
+            pdfName.classList.add('hidden');
+            img.src = uploadedLogbookDataUrl;
+            img.classList.remove('hidden');
+          }
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleCpdFileUpload(event, inputElem) {
+      const file = event.target.files[0];
+      const statusSpan = inputElem.closest('label').querySelector('.upload-status-text');
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          inputElem.setAttribute('data-fileurl', e.target.result);
+          inputElem.setAttribute('data-filename', file.name);
+          statusSpan.innerText = "Terganti";
+          inputElem.closest('label').className = "cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-semibold px-2 py-1 rounded border border-emerald-300 transition flex items-center space-x-1";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function onPenjenjanganChange() {
+      const penjenjangan = document.getElementById('penjenjangan').value;
+      
+      // Matikan semua dahulu
+      document.getElementById('chkPk1').checked = false;
+      document.getElementById('chkPk2').checked = false;
+      document.getElementById('chkPk3').checked = false;
+      document.getElementById('chkPk4').checked = false;
+      document.getElementById('chkPk5').checked = false;
+      document.getElementById('chkBk1').checked = false;
+      document.getElementById('chkBk2').checked = false;
+      document.getElementById('chkBk3').checked = false;
+      document.getElementById('chkBk4').checked = false;
+      document.getElementById('chkBk5').checked = false;
+
+      if (penjenjangan === 'PK I') {
+        document.getElementById('chkPk1').checked = true;
+      } else if (penjenjangan === 'PK II') {
+        document.getElementById('chkPk1').checked = true;
+        document.getElementById('chkPk2').checked = true;
+      } else if (penjenjangan === 'PK III') {
+        document.getElementById('chkPk1').checked = true;
+        document.getElementById('chkPk2').checked = true;
+        document.getElementById('chkPk3').checked = true;
+      } else if (penjenjangan === 'PK IV') {
+        document.getElementById('chkPk1').checked = true;
+        document.getElementById('chkPk2').checked = true;
+        document.getElementById('chkPk3').checked = true;
+        document.getElementById('chkPk4').checked = true;
+      } else if (penjenjangan === 'PK V') {
+        document.getElementById('chkPk1').checked = true;
+        document.getElementById('chkPk2').checked = true;
+        document.getElementById('chkPk3').checked = true;
+        document.getElementById('chkPk4').checked = true;
+        document.getElementById('chkPk5').checked = true;
+      } else if (penjenjangan === 'BK I') {
+        document.getElementById('chkBk1').checked = true;
+      } else if (penjenjangan === 'BK II') {
+        document.getElementById('chkBk1').checked = true;
+        document.getElementById('chkBk2').checked = true;
+      } else if (penjenjangan === 'BK III') {
+        document.getElementById('chkBk1').checked = true;
+        document.getElementById('chkBk2').checked = true;
+        document.getElementById('chkBk3').checked = true;
+      } else if (penjenjangan === 'BK IV') {
+        document.getElementById('chkBk1').checked = true;
+        document.getElementById('chkBk2').checked = true;
+        document.getElementById('chkBk3').checked = true;
+        document.getElementById('chkBk4').checked = true;
+      } else if (penjenjangan === 'BK V') {
+        document.getElementById('chkBk1').checked = true;
+        document.getElementById('chkBk2').checked = true;
+        document.getElementById('chkBk3').checked = true;
+        document.getElementById('chkBk4').checked = true;
+        document.getElementById('chkBk5').checked = true;
+      }
+      handleCheckboxChange();
+    }
+
+    function onKualifikasiChange() {
+      const kualifikasi = document.getElementById('kualifikasi').value.toLowerCase();
+      if(kualifikasi.includes('kebidanan')) {
+        document.getElementById('penjenjangan').value = "BK I";
+      } else {
+        document.getElementById('penjenjangan').value = "PK I";
+      }
+      onPenjenjanganChange();
+    }
+
+    function handleCheckboxChange() {
+      const tbody = document.getElementById("bodyIntervensi");
+      tbody.innerHTML = "";
+
+      let activeCategories = [];
+      if(document.getElementById('chkPk1').checked) activeCategories.push('pk1');
+      if(document.getElementById('chkPk2').checked) activeCategories.push('pk2');
+      if(document.getElementById('chkPk3').checked) activeCategories.push('pk3');
+      if(document.getElementById('chkPk4').checked) activeCategories.push('pk4');
+      if(document.getElementById('chkPk5').checked) activeCategories.push('pk5');
+      if(document.getElementById('chkBk1').checked) activeCategories.push('bk1');
+      if(document.getElementById('chkBk2').checked) activeCategories.push('bk2');
+      if(document.getElementById('chkBk3').checked) activeCategories.push('bk3');
+      if(document.getElementById('chkBk4').checked) activeCategories.push('bk4');
+      if(document.getElementById('chkBk5').checked) activeCategories.push('bk5');
+
+      let counter = 1;
+      activeCategories.forEach(catKey => {
+        const groupList = dataBank[catKey];
+        if (groupList) {
+          groupList.forEach(group => {
+            let trKat = document.createElement("tr");
+            trKat.innerHTML = `<td colspan="6" class="p-2 bg-slate-100 font-bold text-slate-800">${group.kat}</td>`;
+            tbody.appendChild(trKat);
+
+            group.items.forEach(item => {
+              let tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td class="p-2 border-b text-center">${counter++}</td>
+                <td class="p-2 border-b"><input type="text" value="${item}" class="w-full p-1 border rounded bg-transparent"></td>
+                <td class="p-2 border-b text-center">
+                  <select class="w-full p-1 border rounded text-xs">
+                    <option value="1 = Kompeten">1 = Kompeten</option>
+                    <option value="2 = Dengan Supervisi">2 = Dg Supervisi</option>
+                    <option value="3 = Belum Kompeten">3 = Belum Kompeten</option>
+                  </select>
+                </td>
+                <td class="p-2 border-b text-center">
+                  <select class="w-full p-1 border rounded text-xs">
+                    <option value="1 = Berwenang">1 = Berwenang</option>
+                    <option value="2 = Dengan Supervisi">2 = Dg Supervisi</option>
+                    <option value="3 = Bukan Kewenangan">3 = Bukan Kewenangan</option>
+                  </select>
+                </td>
+                <td class="p-2 border-b text-center">
+                  <select class="w-full p-1 border rounded text-xs">
+                    <option value="S = Setuju">S = Setuju</option>
+                    <option value="TS = Tidak Setuju">TS = Tidak Setuju</option>
+                  </select>
+                </td>
+                <td class="p-2 border-b text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+              `;
+              tbody.appendChild(tr);
+            });
+          });
+        }
+      });
+    }
+
+    function loadPresetIntervensi(tipe) {
+      if(tipe === 'bidan') {
+        document.getElementById('kualifikasi').value = "D4 Kebidanan";
+        document.getElementById('penjenjangan').value = "BK I";
+      } else {
+        document.getElementById('kualifikasi').value = "Ners";
+        document.getElementById('penjenjangan').value = "PK I";
+      }
+      onPenjenjanganChange();
+    }
+
+    function tambahBarisIntervensi() {
+      const tbody = document.getElementById("bodyIntervensi");
+      let tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="p-2 border-b text-center">-</td>
+        <td class="p-2 border-b"><input type="text" placeholder="Tulis kewenangan klinis..." class="w-full p-1 border rounded"></td>
+        <td class="p-2 border-b text-center">
+          <select class="w-full p-1 border rounded text-xs">
+            <option>1 = Kompeten</option>
+            <option>2 = Dengan Supervisi</option>
+            <option>3 = Belum Kompeten</option>
+          </select>
+        </td>
+        <td class="p-2 border-b text-center">
+          <select class="w-full p-1 border rounded text-xs">
+            <option>1 = Berwenang</option>
+            <option>2 = Dengan Supervisi</option>
+            <option>3 = Bukan Kewenangan</option>
+          </select>
+        </td>
+        <td class="p-2 border-b text-center">
+          <select class="w-full p-1 border rounded text-xs">
+            <option>S = Setuju</option>
+            <option>TS = Tidak Setuju</option>
+          </select>
+        </td>
+        <td class="p-2 border-b text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function tambahBarisCpd() {
+      const tbody = document.getElementById("bodyCpd");
+      let tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="p-2 border-b"><input type="text" placeholder="2025" class="w-full p-1 border rounded"></td>
+        <td class="p-2 border-b"><input type="text" placeholder="Nama kegiatan..." class="w-full p-1 border rounded"></td>
+        <td class="p-2 border-b"><input type="text" placeholder="No. Sertifikat" class="w-full p-1 border rounded"></td>
+        <td class="p-2 border-b"><input type="text" placeholder="Penyelenggara" class="w-full p-1 border rounded"></td>
+        <td class="p-2 border-b">
+          <select class="w-full p-1 border rounded">
+            <option>Pelatihan</option>
+            <option>Workshop</option>
+            <option>Seminar</option>
+          </select>
+        </td>
+        <td class="p-2 border-b"><input type="date" class="w-full p-1 border rounded"></td>
+        <td class="p-2 border-b text-center">
+          <div class="flex items-center justify-center space-x-2">
+            <label class="cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-semibold px-2 py-1 rounded border border-blue-300 transition flex items-center space-x-1" title="Unggah Dokumen Sertifikat">
+              <i class="fa-solid fa-file-arrow-up"></i>
+              <span class="upload-status-text">Upload</span>
+              <input type="file" accept="image/*,.pdf" class="hidden cpd-file-input" onchange="handleCpdFileUpload(event, this)">
+            </label>
+            <button type="button" onclick="this.closest('tr').remove()" class="text-red-500 hover:text-red-700 p-1" title="Hapus Baris">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function switchTab(tabId) {
+      if ((tabId === 'previewTab' || tabId === 'historyTab') && !checkPasswordAccess()) {
+        return;
+      }
+
+      document.getElementById('formTab').classList.add('hidden');
+      document.getElementById('previewTab').classList.add('hidden');
+      document.getElementById('historyTab').classList.add('hidden');
+
+      document.getElementById('btnFormTab').className = "py-3 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent flex items-center space-x-2";
+      document.getElementById('btnPreviewTab').className = "py-3 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent flex items-center space-x-2";
+      document.getElementById('btnHistoryTab').className = "py-3 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent flex items-center space-x-2";
+
+      document.getElementById(tabId).classList.remove('hidden');
+      if(tabId === 'formTab') document.getElementById('btnFormTab').className = "py-3 px-1 border-b-2 font-medium text-sm text-emerald-700 border-emerald-600 flex items-center space-x-2";
+      if(tabId === 'previewTab') {
+        document.getElementById('btnPreviewTab').className = "py-3 px-1 border-b-2 font-medium text-sm text-emerald-700 border-emerald-600 flex items-center space-x-2";
+        preparePreview();
+      }
+      if(tabId === 'historyTab') document.getElementById('btnHistoryTab').className = "py-3 px-1 border-b-2 font-medium text-sm text-emerald-700 border-emerald-600 flex items-center space-x-2";
+    }
+
+    function preparePreview() {
+      const namaVal = document.getElementById('nama').value || '....................';
+      const nipVal = document.getElementById('nip').value || '-';
+      const strVal = document.getElementById('noStr').value || '-';
+      const unitVal = document.getElementById('unitKerja').value || 'Rawat Inap';
+      const jenjangVal = document.getElementById('penjenjangan').value || 'PK I';
+      const jenjangText = document.getElementById('penjenjangan').options[document.getElementById('penjenjangan').selectedIndex].text;
+
+      document.getElementById('certNama').innerText = namaVal;
+      document.getElementById('certNip').innerText = nipVal;
+      document.getElementById('certStr').innerText = strVal;
+      document.getElementById('certUnit').innerText = unitVal;
+      document.getElementById('certJenjang').innerText = jenjangText;
+      document.getElementById('certKetuaKomite').innerText = document.getElementById('ketuaKomite').value || 'Ns. Asqitul Baroroh, S.Kep';
+
+      const tglPersetujuan = document.getElementById('tglPersetujuan').value;
+      if(tglPersetujuan) {
+        const d = new Date(tglPersetujuan);
+        const bulanNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const formattedDate = `${d.getDate()} ${bulanNames[d.getMonth()]} ${d.getFullYear()}`;
+        document.getElementById('certTglPelaksanaan').innerText = formattedDate;
+        document.getElementById('certTglPenerbitan').innerText = formattedDate;
+        document.getElementById('spkTglDitetapkan').innerText = formattedDate;
+      }
+
+      document.getElementById('spkNamaHeader').innerText = namaVal;
+      document.getElementById('spkNamaKesatu').innerText = namaVal;
+      document.getElementById('spkUnitKerja').innerText = unitVal;
+      document.getElementById('spkKualifikasi').innerText = jenjangVal;
+
+      document.getElementById('p Nama').innerText = namaVal;
+      document.getElementById('pNip').innerText = nipVal;
+      document.getElementById('pJenjang').innerText = jenjangText;
+      document.getElementById('pStr').innerText = strVal;
+      document.getElementById('pStatus').innerText = document.querySelector('input[name="statusKredensial"]:checked').value;
+      document.getElementById('pCatatanMitra').innerText = document.getElementById('catatanMitra').value || '-';
+
+      const imgTag = document.getElementById('pPreviewFotoImg');
+      const textTag = document.getElementById('pPreviewFotoText');
+      if(uploadedFotoDataUrl) {
+        imgTag.src = uploadedFotoDataUrl;
+        imgTag.classList.remove('hidden');
+        textTag.classList.add('hidden');
+      } else {
+        imgTag.classList.add('hidden');
+        textTag.classList.remove('hidden');
+      }
+
+      const logbookImg = document.getElementById('pLogbookImg');
+      const logbookPdfText = document.getElementById('pLogbookPdfText');
+      const logbookEmpty = document.getElementById('pLogbookEmptyText');
+
+      if(uploadedLogbookDataUrl) {
+        logbookEmpty.classList.add('hidden');
+        if(uploadedLogbookIsPdf) {
+          logbookImg.classList.add('hidden');
+          logbookPdfText.classList.remove('hidden');
+          logbookPdfText.innerHTML = `<i class="fa-solid fa-file-pdf mr-1 text-red-600"></i> Berkas Logbook Harian Terlampir (PDF: ${uploadedLogbookFileNameStr})`;
+        } else {
+          logbookPdfText.classList.add('hidden');
+          logbookImg.src = uploadedLogbookDataUrl;
+          logbookImg.classList.remove('hidden');
+        }
+      } else {
+        logbookImg.classList.add('hidden');
+        logbookPdfText.classList.add('hidden');
+        logbookEmpty.classList.remove('hidden');
+      }
+
+      const cpdContainer = document.getElementById('pCpdSertifikatContainer');
+      cpdContainer.innerHTML = '';
+      const cpdFileInputs = document.querySelectorAll('.cpd-file-input');
+
+      cpdFileInputs.forEach((fileInput, idx) => {
+        const fileUrl = fileInput.getAttribute('data-fileurl');
+        const row = fileInput.closest('tr');
+        const namaKegiatan = row ? row.children[1].querySelector('input').value : `Kegiatan CPD ${idx+1}`;
+
+        if (fileUrl && fileUrl.startsWith('data:image')) {
+          const div = document.createElement('div');
+          div.className = "border border-slate-300 p-2 rounded bg-slate-50 text-center";
+          div.innerHTML = `
+            <p class="text-xs font-bold text-slate-700 mb-2">Lampiran Bukti CPD: ${namaKegiatan}</p>
+            <img src="${fileUrl}" class="w-full h-auto rounded shadow-sm" alt="Bukti CPD">
+          `;
+          cpdContainer.appendChild(div);
+        }
+      });
+
+      document.getElementById('pTtdMitra').innerText = `( ${document.getElementById('ketuaMitra').value || 'Mahendra, Amd.Kep'} )`;
+      document.getElementById('pTtdKomite').innerText = `( ${document.getElementById('ketuaKomite').value || 'Ns. Asqitul Baroroh, S.Kep'} )`;
+
+      const pTbody = document.querySelector('#pTabelRkk tbody');
+      pTbody.innerHTML = '';
+      const rows = document.querySelectorAll('#bodyIntervensi tr');
+
+      rows.forEach(r => {
+        if(r.children.length === 1) {
+          let trKat = document.createElement('tr');
+          trKat.innerHTML = `<td colspan="5" class="border border-slate-900 p-1.5 font-bold bg-slate-100" contenteditable="true">${r.children[0].innerText}</td>`;
+          pTbody.appendChild(trKat);
+        } else if(r.children.length >= 5) {
+          let no = r.children[0].innerText;
+          let text = r.children[1].querySelector('input').value;
+          let selfVal = r.children[2].querySelector('select').value;
+          let mitraVal = r.children[3].querySelector('select').value;
+          let rekomVal = r.children[4].querySelector('select').value;
+
+          let tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="border border-slate-900 p-1.5 text-center" contenteditable="true">${no}</td>
+            <td class="border border-slate-900 p-1.5" contenteditable="true">${text}</td>
+            <td class="border border-slate-900 p-1.5 text-center" contenteditable="true">${selfVal}</td>
+            <td class="border border-slate-900 p-1.5 text-center" contenteditable="true">${mitraVal}</td>
+            <td class="border border-slate-900 p-1.5 text-center font-bold" contenteditable="true">${rekomVal}</td>
+          `;
+          pTbody.appendChild(tr);
+        }
+      });
+
+      setEditableState(isAuthenticated);
+    }
+
+    function openSettingsModal() {
+      if(!checkPasswordAccess()) return;
+      document.getElementById('scriptUrlInput').value = localStorage.getItem('scriptUrl') || '';
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+    function saveSettings() {
+      const url = document.getElementById('scriptUrlInput').value;
+      localStorage.setItem('scriptUrl', url);
+      alert('URL Apps Script berhasil disimpan!');
+      closeSettingsModal();
+    }
+
+    function submitForm(e) {
+      e.preventDefault();
+      const scriptUrl = localStorage.getItem('scriptUrl');
+      
+      const nama = document.getElementById('nama').value;
+      const penjenjangan = document.getElementById('penjenjangan').value;
+      const idData = "KRED-" + Math.floor(100000 + Math.random() * 900000);
+
+      const cpdRows = document.querySelectorAll('#bodyCpd tr');
+      const cpdDataList = [];
+      cpdRows.forEach(r => {
+        const inputs = r.querySelectorAll('input');
+        const select = r.querySelector('select');
+        const fileInput = r.querySelector('.cpd-file-input');
+        if(inputs.length >= 3) {
+          cpdDataList.push({
+            tahun: inputs[0].value,
+            kegiatan: inputs[1].value,
+            bukti: inputs[2].value,
+            penyelenggara: inputs[3] ? inputs[3].value : '',
+            jenis: select ? select.value : '',
+            masaBerlaku: inputs[4] ? inputs[4].value : '',
+            fileUrl: fileInput ? fileInput.getAttribute('data-fileurl') : ''
+          });
+        }
+      });
+
+      const formDataObject = {
+        nama: nama,
+        nip: document.getElementById('nip').value,
+        tglLahir: document.getElementById('tglLahir').value,
+        alamat: document.getElementById('alamat').value,
+        telepon: document.getElementById('telepon').value,
+        email: document.getElementById('email').value,
+        noStr: document.getElementById('noStr').value,
+        noIjazah: document.getElementById('noIjazah').value,
+        institusi: document.getElementById('institusi').value,
+        tglLulus: document.getElementById('tglLulus').value,
+        kualifikasi: document.getElementById('kualifikasi').value,
+        penjenjangan: penjenjangan,
+        unitKerja: document.getElementById('unitKerja').value,
+        statusKredensial: document.querySelector('input[name="statusKredensial"]:checked').value,
+        ketuaMitra: document.getElementById('ketuaMitra').value,
+        ketuaKomite: document.getElementById('ketuaKomite').value,
+        tglPersetujuan: document.getElementById('tglPersetujuan').value,
+        catatanMitra: document.getElementById('catatanMitra').value,
+        foto: uploadedFotoDataUrl,
+        logbook: uploadedLogbookDataUrl,
+        logbookIsPdf: uploadedLogbookIsPdf,
+        logbookFileName: uploadedLogbookFileNameStr,
+        cpdList: cpdDataList
+      };
+
+      const payload = {
+        action: "addNewDocument",
+        filename: `Kredensial_${nama}_${penjenjangan}.pdf`,
+        category: "Akreditasi",
+        url: "",
+        id: idData,
+        pokjaDetail: "KKS",
+        epDetail: "KKS 10 / KKS 14"
+      };
+
+      let history = JSON.parse(localStorage.getItem('kredensialHistory') || '[]');
+      history.unshift({
+        time: new Date().toLocaleString(),
+        nama: nama,
+        jenjang: `${formDataObject.kualifikasi} (${penjenjangan})`,
+        status: formDataObject.statusKredensial,
+        id: idData,
+        data: formDataObject
+      });
+      localStorage.setItem('kredensialHistory', JSON.stringify(history));
+      updateHistoryTable();
+
+      if(!scriptUrl) {
+        alert('Data berhasil diproses dan disimpan secara lokal!');
+        resetFormulir(false);
+        switchTab('historyTab');
+        return;
+      }
+
+      fetch(scriptUrl, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert('Berhasil dikirim ke Google Sheets Spreadsheet: ' + data.message);
+        resetFormulir(false);
+        switchTab('historyTab');
+      })
+      .catch(err => {
+        alert('Tersimpan secara lokal. Gagal terhubung ke Apps Script: ' + err);
+        resetFormulir(false);
+        switchTab('historyTab');
+      });
+    }
+
+    function loadHistoryItem(id) {
+      if(!checkPasswordAccess()) return;
+      
+      let history = JSON.parse(localStorage.getItem('kredensialHistory') || '[]');
+      let item = history.find(h => h.id === id);
+      if(item && item.data) {
+        let d = item.data;
+        document.getElementById('nama').value = d.nama || '';
+        document.getElementById('nip').value = d.nip || '';
+        document.getElementById('tglLahir').value = d.tglLahir || '';
+        document.getElementById('alamat').value = d.alamat || '';
+        document.getElementById('telepon').value = d.telepon || '';
+        document.getElementById('email').value = d.email || '';
+        document.getElementById('noStr').value = d.noStr || '';
+        document.getElementById('noIjazah').value = d.noIjazah || '';
+        document.getElementById('institusi').value = d.institusi || '';
+        document.getElementById('tglLulus').value = d.tglLulus || '';
+        document.getElementById('kualifikasi').value = d.kualifikasi || 'Ners';
+        document.getElementById('penjenjangan').value = d.penjenjangan || 'PK I';
+        document.getElementById('unitKerja').value = d.unitKerja || 'Rawat Inap';
+        document.getElementById('ketuaMitra').value = d.ketuaMitra || '';
+        document.getElementById('ketuaKomite').value = d.ketuaKomite || '';
+        document.getElementById('tglPersetujuan').value = d.tglPersetujuan || '';
+        document.getElementById('catatanMitra').value = d.catatanMitra || '';
+
+        if(d.foto) {
+          uploadedFotoDataUrl = d.foto;
+          document.getElementById('fotoPreviewBox').innerHTML = `<img src="${uploadedFotoDataUrl}" class="w-full h-full object-cover">`;
+        }
+
+        if(d.logbook) {
+          uploadedLogbookDataUrl = d.logbook;
+          uploadedLogbookIsPdf = d.logbookIsPdf || false;
+          uploadedLogbookFileNameStr = d.logbookFileName || '';
+
+          const box = document.getElementById('logbookFormBox');
+          const img = document.getElementById('logbookFormImg');
+          const pdfName = document.getElementById('logbookFileName');
+
+          box.classList.remove('hidden');
+          if (uploadedLogbookIsPdf) {
+            img.classList.add('hidden');
+            pdfName.classList.remove('hidden');
+            pdfName.querySelector('span').innerText = uploadedLogbookFileNameStr;
+          } else {
+            pdfName.classList.add('hidden');
+            img.src = uploadedLogbookDataUrl;
+            img.classList.remove('hidden');
+          }
+        }
+
+        if(d.cpdList && d.cpdList.length > 0) {
+          const tbody = document.getElementById("bodyCpd");
+          tbody.innerHTML = "";
+          d.cpdList.forEach(cpd => {
+            let tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td class="p-2 border-b"><input type="text" value="${cpd.tahun}" class="w-full p-1 border rounded"></td>
+              <td class="p-2 border-b"><input type="text" value="${cpd.kegiatan}" class="w-full p-1 border rounded"></td>
+              <td class="p-2 border-b"><input type="text" value="${cpd.bukti}" class="w-full p-1 border rounded"></td>
+              <td class="p-2 border-b"><input type="text" value="${cpd.penyelenggara}" class="w-full p-1 border rounded"></td>
+              <td class="p-2 border-b">
+                <select class="w-full p-1 border rounded">
+                  <option ${cpd.jenis === 'Pelatihan' ? 'selected' : ''}>Pelatihan</option>
+                  <option ${cpd.jenis === 'Workshop' ? 'selected' : ''}>Workshop</option>
+                  <option ${cpd.jenis === 'Seminar' ? 'selected' : ''}>Seminar</option>
+                </select>
+              </td>
+              <td class="p-2 border-b"><input type="date" value="${cpd.masaBerlaku || ''}" class="w-full p-1 border rounded"></td>
+              <td class="p-2 border-b text-center">
+                <div class="flex items-center justify-center space-x-2">
+                  <label class="cursor-pointer ${cpd.fileUrl ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-blue-50 text-blue-700 border-blue-300'} hover:bg-blue-100 text-[11px] font-semibold px-2 py-1 rounded border transition flex items-center space-x-1" title="Unggah Dokumen Sertifikat">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    <span class="upload-status-text">${cpd.fileUrl ? 'Terganti' : 'Upload'}</span>
+                    <input type="file" accept="image/*,.pdf" class="hidden cpd-file-input" ${cpd.fileUrl ? `data-fileurl="${cpd.fileUrl}"` : ''} onchange="handleCpdFileUpload(event, this)">
+                  </label>
+                  <button type="button" onclick="this.closest('tr').remove()" class="text-red-500 hover:text-red-700 p-1" title="Hapus Baris">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        switchTab('previewTab');
+      } else {
+        switchTab('previewTab');
+      }
+    }
+
+    function deleteHistoryItem(id) {
+      if(!checkPasswordAccess()) return;
+      if(confirm('Apakah Anda yakin ingin menghapus data pengajuan riwayat ini?')) {
+        let history = JSON.parse(localStorage.getItem('kredensialHistory') || '[]');
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('kredensialHistory', JSON.stringify(history));
+        updateHistoryTable();
+      }
+    }
+
+    function updateHistoryTable() {
+      let history = JSON.parse(localStorage.getItem('kredensialHistory') || '[]');
+      const tbody = document.getElementById('historyTableBody');
+      if(history.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Belum ada riwayat pengajuan dalam sesi ini.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = '';
+      history.forEach(item => {
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-3 border-b text-xs">${item.time}</td>
+          <td class="p-3 border-b font-medium">${item.nama}</td>
+          <td class="p-3 border-b text-xs">${item.jenjang}</td>
+          <td class="p-3 border-b"><span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded font-semibold">${item.status}</span></td>
+          <td class="p-3 border-b font-mono text-xs">${item.id}</td>
+          <td class="p-3 border-b text-center space-x-2">
+            <button onclick="loadHistoryItem('${item.id}')" class="text-emerald-700 hover:underline text-xs font-bold">Lihat Form</button>
+            <span class="text-slate-300">|</span>
+            <button onclick="deleteHistoryItem('${item.id}')" class="text-red-600 hover:underline text-xs font-bold">Hapus</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.onload = function() {
+      document.getElementById('tglPersetujuan').value = new Date().toISOString().split('T')[0];
+      handleCheckboxChange();
+      updateHistoryTable();
+      setEditableState(false);
+      loadFormStateLocally();
+      attachAutoSaveListeners();
+    };
+  </script>
+</body>
+</html>
